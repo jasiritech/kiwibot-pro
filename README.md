@@ -47,6 +47,7 @@ npm run cli
 ### 🤖 AI Integration
 - **OpenAI** - GPT-4o, GPT-4 Turbo
 - **Anthropic** - Claude 3.5 Sonnet, Opus
+- **Google Gemini** - Gemini 1.5 Pro, Flash ✨ NEW!
 - **Streaming** - Real-time responses
 - **Model Failover** - Auto-switch on errors
 
@@ -146,6 +147,18 @@ kiwi doctor
 # ✅ Memory usage
 ```
 
+### 🔥 EXCLUSIVE PRO FEATURES (Only in KiwiBot Pro!)
+
+Unlike Moltbot or Clawdbot, KiwiBot Pro includes these advanced systems fully integrated as **AI Tools**:
+
+- 🧠 **Long-term Memory (RAG)** - Stores user preferences and facts permanently using vector-like search.
+- 👁️ **Vision Analyzer** - Deep image analysis and OCR.
+- 💻 **Code Sandbox** - Executes JS, TS, Python, and Bash in a safe, isolated environment.
+- 🌍 **Sheng/Kiswahili Translation** - Advanced multi-language support with slang explanation.
+- 📊 **Usage Analytics** - Tracks costs, tokens, and user patterns automatically.
+- 📁 **Universal File Processor** - Read and summarize PDFs, Excel, Word, and CSV files.
+- 😊 **Mood/Sentiment Tracking** - Adapts responses based on the user's emotional state.
+
 ### ⚡ Skills System
 9 built-in skills:
 - `weather` - Current weather
@@ -209,7 +222,10 @@ kiwibot-pro/
 │   │   ├── service.ts        # AI providers
 │   │   ├── failover.ts       # Model failover
 │   │   ├── think.ts          # Think levels
-│   │   └── agents.ts         # Agent collaboration
+│   │   ├── agents.ts         # Agent collaboration
+│   │   └── gemini.ts         # Google Gemini ✨
+│   ├── analytics/
+│   │   └── tracker.ts        # Usage analytics ✨
 │   ├── automation/
 │   │   └── cron.ts           # Cron & webhooks
 │   ├── channels/
@@ -219,10 +235,22 @@ kiwibot-pro/
 │   │   └── whatsapp.ts
 │   ├── cli/
 │   │   └── index.ts          # CLI interface
+│   ├── code/
+│   │   └── sandbox.ts        # Code execution ✨
 │   ├── config/
 │   │   └── index.ts          # Configuration
+│   ├── files/
+│   │   └── processor.ts      # PDF/Word/Excel ✨
 │   ├── gateway/
 │   │   └── server.ts         # WebSocket server
+│   ├── learning/
+│   │   └── adaptive.ts       # Adaptive learning ✨
+│   ├── memory/
+│   │   └── rag.ts            # Long-term memory ✨
+│   ├── mood/
+│   │   └── analyzer.ts       # Sentiment analysis ✨
+│   ├── notifications/
+│   │   └── push.ts           # Push notifications ✨
 │   ├── personality/
 │   │   └── workspace.ts      # SOUL.md parser
 │   ├── security/
@@ -231,15 +259,21 @@ kiwibot-pro/
 │   │   └── manager.ts        # Session management
 │   ├── skills/
 │   │   └── manager.ts        # Skills system
+│   ├── smart/
+│   │   └── context.ts        # Smart context ✨
 │   ├── tools/
 │   │   ├── browser.ts        # Puppeteer
 │   │   └── doctor.ts         # Diagnostics
+│   ├── translation/
+│   │   └── translate.ts      # 60+ languages ✨
 │   ├── types/
 │   │   └── index.ts          # TypeScript types
 │   ├── utils/
 │   │   ├── events.ts         # Event bus
 │   │   ├── logger.ts         # Logging
 │   │   └── typing.ts         # Typing indicators
+│   ├── vision/
+│   │   └── analyzer.ts       # Image analysis ✨
 │   ├── voice/
 │   │   └── talk.ts           # Voice/Talk mode
 │   └── web/
@@ -252,12 +286,121 @@ kiwibot-pro/
 
 ---
 
+## 🆕 EXCLUSIVE FEATURES (Only in KiwiBot Pro!)
+
+### 🧠 Long-term Memory with RAG
+```javascript
+// Remember facts about users
+await memorySystem.remember("User likes coffee", userId, "preference");
+
+// Recall relevant memories
+const memories = await memorySystem.recall("coffee preferences", userId);
+```
+
+### 👁️ Vision/Image Analysis
+```javascript
+// Analyze images with AI vision
+const result = await visionAnalyzer.analyze(imageUrl, "Describe this");
+console.log(result.description, result.objects);
+
+// Extract text (OCR)
+const text = await visionAnalyzer.extractText(imageUrl);
+```
+
+### 💻 Code Sandbox
+Execute code safely in isolated environment:
+```javascript
+// Run Python
+const result = await codeSandbox.execute(`
+print("Hello from Python!")
+`, 'python');
+
+// Run JavaScript
+await codeSandbox.execute(`console.log("Hello!")`, 'javascript');
+```
+Supports: JavaScript, TypeScript, Python, Bash
+
+### 🌍 Translation (60+ Languages)
+```javascript
+// Translate to Kiswahili
+const result = await translationService.translate(
+  "Hello, how are you?",
+  "sw"  // Kiswahili
+);
+// "Habari, u hali gani?"
+
+// Detect language
+const lang = await translationService.detectLanguage("Mambo vipi?");
+// "sw"
+```
+
+### 📊 Analytics & Usage Tracking
+```javascript
+// Track usage automatically
+analyticsTracker.trackMessage(userId, channel, model, tokens, latency);
+
+// Get summary
+const stats = analyticsTracker.getSummary();
+console.log(stats.total.messages, stats.total.cost);
+```
+
+### 📁 File Processing
+```javascript
+// Process PDF, Word, Excel, CSV, Images
+const doc = await fileProcessor.process("report.pdf");
+console.log(doc.content);
+
+// Analyze with AI
+const analysis = await fileProcessor.analyze(doc);
+console.log(analysis.summary, analysis.keyPoints);
+```
+
+### 🧠 Smart Context Management
+```javascript
+// Auto-compress long conversations
+await smartContext.addMessage(sessionId, { role: 'user', content: message });
+
+// Automatic summarization when context grows too large
+const optimized = smartContext.buildContext(sessionId, maxTokens);
+```
+
+### 😊 Mood/Sentiment Detection
+```javascript
+// Detect user mood
+const { mood, confidence } = moodAnalyzer.analyze("This is frustrating!");
+// mood: "frustrated", confidence: 0.85
+
+// Adapt responses based on mood
+const response = moodAnalyzer.adaptResponse(botResponse, userId);
+```
+
+### 🔔 Push Notifications
+```javascript
+// Send to Slack, Discord, Telegram
+await notificationService.notify(userId, "Task Complete", "Your task is done!");
+
+// Schedule reminders
+await notificationService.scheduleReminder(userId, "Meeting", "Don't forget!", 3600000);
+```
+
+### 📚 Adaptive Learning
+```javascript
+// Bot learns from corrections
+adaptiveLearning.recordCorrection(userId, originalQuery, botResponse, correction);
+
+// Auto-apply learned patterns
+const improved = adaptiveLearning.applyLearning(query, response, userId);
+```
+
+---
+
 ## ⚙️ Environment Variables
 
 ```env
 # AI Providers
 OPENAI_API_KEY=sk-...
 ANTHROPIC_API_KEY=sk-ant-...
+GEMINI_API_KEY=...
 AI_MODEL=gpt-4o
 
 # Gateway
@@ -282,28 +425,46 @@ DEFAULT_THINK_LEVEL=medium
 DM_POLICY=pairing
 PAIRING_CODE_EXPIRY=15
 FAILOVER_MAX_RETRIES=3
+
+# Exclusive Features
+MEMORY_PATH=./.kiwibot/memories.json
+ANALYTICS_PATH=./.kiwibot/analytics.json
+LEARNING_PATH=./.kiwibot/learning.json
+SLACK_WEBHOOK_URL=https://hooks.slack.com/...
+DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/...
 ```
 
 ---
 
-## 🔥 Why KiwiBot Pro is Better
+## 🔥 Why KiwiBot Pro is MUCH Better
 
-| Feature | KiwiBot Pro | Clawdbot |
-|---------|-------------|----------|
-| Gateway Architecture | ✅ | ✅ |
-| Multi-Channel | ✅ 3 channels | ✅ |
-| Voice/Talk | ✅ | ✅ |
-| Browser Control | ✅ | ✅ |
-| Model Failover | ✅ | ✅ |
-| Think Levels | ✅ 6 levels | ✅ |
-| DM Security | ✅ | ✅ |
-| Agent Collaboration | ✅ | ✅ |
-| SOUL.md | ✅ | ✅ |
-| Skills System | ✅ 9 skills | - |
-| Web Dashboard | ✅ | - |
-| CLI Tool | ✅ | ✅ |
-| Doctor Command | ✅ | ✅ |
-| Kiswahili Support | ✅ 🇰🇪 | - |
+| Feature | KiwiBot Pro | Clawdbot | Moltbot |
+|---------|-------------|----------|---------|
+| Gateway Architecture | ✅ | ✅ | ✅ |
+| Multi-Channel | ✅ 3 channels | ✅ | ✅ |
+| Voice/Talk | ✅ | ✅ | ✅ |
+| Browser Control | ✅ | ✅ | ✅ |
+| Model Failover | ✅ | ✅ | ✅ |
+| Think Levels | ✅ 6 levels | ✅ | ✅ |
+| DM Security | ✅ | ✅ | ✅ |
+| Agent Collaboration | ✅ | ✅ | ✅ |
+| SOUL.md | ✅ | ✅ | ✅ |
+| Skills System | ✅ 9 skills | - | - |
+| Web Dashboard | ✅ | - | - |
+| CLI Tool | ✅ | ✅ | ✅ |
+| Doctor Command | ✅ | ✅ | ✅ |
+| **Gemini Support** | ✅ 🆕 | - | - |
+| **Long-term Memory/RAG** | ✅ 🆕 | - | - |
+| **Vision/Image Analysis** | ✅ 🆕 | - | - |
+| **Code Sandbox** | ✅ 🆕 | - | - |
+| **Translation (60+ langs)** | ✅ 🆕 | - | - |
+| **Analytics & Tracking** | ✅ 🆕 | - | - |
+| **File Processing** | ✅ 🆕 | - | - |
+| **Smart Context** | ✅ 🆕 | - | - |
+| **Mood Detection** | ✅ 🆕 | - | - |
+| **Push Notifications** | ✅ 🆕 | - | - |
+| **Adaptive Learning** | ✅ 🆕 | - | - |
+| Kiswahili Support | ✅ 🇰🇪 | - | - |
 
 ---
 

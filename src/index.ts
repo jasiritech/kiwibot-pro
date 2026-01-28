@@ -31,6 +31,19 @@ import { thinkManager } from './ai/think.js';
 import { agentCollaboration } from './ai/agents.js';
 import { workspacePersonality } from './personality/workspace.js';
 
+// 🆕 EXCLUSIVE FEATURES (Not in Clawdbot/Moltbot!)
+import { memorySystem } from './memory/rag.js';
+import { visionAnalyzer } from './vision/analyzer.js';
+import { codeSandbox } from './code/sandbox.js';
+import { translationService } from './translation/translate.js';
+import { analyticsTracker } from './analytics/tracker.js';
+import { fileProcessor } from './files/processor.js';
+import { smartContext } from './smart/context.js';
+import { moodAnalyzer } from './mood/analyzer.js';
+import { notificationService } from './notifications/push.js';
+import { adaptiveLearning } from './learning/adaptive.js';
+import { geminiProvider } from './ai/gemini.js';
+
 class KiwiBotPro {
   private gateway: Gateway;
   private isShuttingDown = false;
@@ -78,6 +91,10 @@ class KiwiBotPro {
     const providers = await aiService.checkProviders();
     logger.info(`   Available providers: ${providers.join(', ') || 'none'}`);
 
+    // Register Pro tools (UNIQUE!)
+    logger.info('🛠️  Registering Pro tools...');
+    this.registerProTools();
+
     // Load skills
     logger.info('⚡ Loading skills...');
     const skills = skillManager.list();
@@ -108,7 +125,7 @@ class KiwiBotPro {
     if (kiwiConfig.web.enabled) {
       logger.info(`  Dashboard: http://localhost:${kiwiConfig.web.port}`);
     }
-    logger.info(`  Model:     ${kiwiConfig.ai.model}`);
+    logger.info(`  Model:     ${kiwiConfig.ai.defaultModel || 'auto'}`);
     logger.info(`  Failover:  ${modelFailover.getCurrentProvider() || 'auto'}`);
     if (workspacePersonality.hasSoul()) {
       logger.info(`  Soul:      ${workspacePersonality.getName()}`);
@@ -126,6 +143,38 @@ class KiwiBotPro {
     logger.info('   • SOUL.md & AGENTS.md Personality');
     logger.info('   • Doctor Diagnostics (kiwi doctor)');
     logger.info('');
+    logger.info('🆕 EXCLUSIVE FEATURES (Only in KiwiBot Pro!):');
+    logger.info('   • 🧠 Long-term Memory with RAG');
+    logger.info('   • 👁️ Vision/Image Analysis & OCR');
+    logger.info('   • 💻 Code Sandbox (JS, Python, TS, Bash)');
+    logger.info('   • 🌍 Translation (60+ languages + Kiswahili)');
+    logger.info('   • 📊 Analytics & Usage Tracking');
+    logger.info('   • 📁 File Processing (PDF, Word, Excel, CSV)');
+    logger.info('   • 🧠 Smart Context Management');
+    logger.info('   • 😊 Mood/Sentiment Detection');
+    logger.info('   • 🔔 Push Notifications (Slack/Discord/Telegram)');
+    logger.info('   • 📚 Adaptive Learning from Corrections');
+    logger.info('   • ✨ Gemini AI Support');
+    logger.info('');
+  }
+
+  private registerProTools(): void {
+    const proTools = [
+      ...browserControl.getTools(),
+      ...memorySystem.getTools(),
+      ...visionAnalyzer.getTools(),
+      ...codeSandbox.getTools(),
+      ...translationService.getTools(),
+      ...fileProcessor.getTools(),
+      ...moodAnalyzer.getTools(),
+      ...analyticsTracker.getTools()
+    ];
+
+    for (const tool of proTools) {
+      aiService.registerTool(tool as any);
+    }
+    
+    logger.info(`   ✅ Registered ${proTools.length} exclusive pro tools`);
   }
 
   private async initializeChannels(): Promise<void> {
@@ -135,7 +184,7 @@ class KiwiBotPro {
     if (channelConfigs.discord.enabled) {
       try {
         const discord = new DiscordChannel();
-        await channelRouter.register('discord', discord);
+        channelRouter.register(discord);
         logger.info('   ✅ Discord channel registered');
       } catch (error) {
         logger.warn('   ⚠️  Discord channel failed:', error);
@@ -146,7 +195,7 @@ class KiwiBotPro {
     if (channelConfigs.telegram.enabled) {
       try {
         const telegram = new TelegramChannel();
-        await channelRouter.register('telegram', telegram);
+        channelRouter.register(telegram);
         logger.info('   ✅ Telegram channel registered');
       } catch (error) {
         logger.warn('   ⚠️  Telegram channel failed:', error);
@@ -157,7 +206,7 @@ class KiwiBotPro {
     if (channelConfigs.whatsapp.enabled) {
       try {
         const whatsapp = new WhatsAppChannel();
-        await channelRouter.register('whatsapp', whatsapp);
+        channelRouter.register(whatsapp);
         logger.info('   ✅ WhatsApp channel registered');
       } catch (error) {
         logger.warn('   ⚠️  WhatsApp channel failed:', error);
@@ -186,8 +235,8 @@ class KiwiBotPro {
       logger.warn(`⚠️  Channel disconnected: ${channel}`);
     });
 
-    eventBus.onEvent('skill:executed', ({ skill, result }) => {
-      logger.debug(`⚡ Skill executed: ${skill} -> ${result.status}`);
+    eventBus.onEvent('skill:executed', (data: any) => {
+      logger.debug(`⚡ Skill executed: ${data?.skill} -> ${data?.result?.status || 'done'}`);
     });
   }
 
@@ -206,7 +255,7 @@ class KiwiBotPro {
     await this.gateway.stop();
 
     // Clear sessions
-    sessionManager.clearAll();
+    (sessionManager as any).clearAll?.();
 
     logger.info('All services stopped');
   }

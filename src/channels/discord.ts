@@ -78,7 +78,9 @@ class DiscordChannel implements ChannelHandler {
     };
 
     try {
-      await discordMsg.channel.sendTyping();
+      if ('sendTyping' in discordMsg.channel) {
+        await (discordMsg.channel as any).sendTyping();
+      }
       
       const response = await channelRouter.routeIncoming(message);
       

@@ -49,6 +49,9 @@ class ConfigManager extends EventEmitter {
           anthropic: process.env.ANTHROPIC_API_KEY 
             ? { apiKey: process.env.ANTHROPIC_API_KEY } 
             : undefined,
+          google: process.env.GEMINI_API_KEY 
+            ? { apiKey: process.env.GEMINI_API_KEY } 
+            : undefined,
         },
         systemPrompt: this.getDefaultSystemPrompt(),
       },

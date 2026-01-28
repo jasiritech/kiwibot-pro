@@ -3,11 +3,21 @@
  * CDP-based browser automation (like Moltbot's browser tool)
  */
 
-import puppeteer, { Browser, Page, ElementHandle } from 'puppeteer';
+// @ts-ignore - puppeteer is optional
+import type { Browser, Page, ElementHandle } from 'puppeteer';
 import { logger } from '../utils/logger.js';
 import { eventBus } from '../utils/events.js';
 import * as fs from 'fs/promises';
 import * as path from 'path';
+
+// Dynamic import for puppeteer (optional dependency)
+let puppeteer: any;
+try {
+  // @ts-ignore - might not be installed
+  puppeteer = await import('puppeteer');
+} catch {
+  logger.warn('Browser: Puppeteer not installed. Browser control disabled.');
+}
 
 interface BrowserConfig {
   enabled: boolean;
@@ -140,16 +150,25 @@ class BrowserControl {
    * Take screenshot
    */
   async screenshot(
-    pageId: string = 'main',
-    options: ScreenshotOptions = {}
-  ): Promise<Buffer> {
+    pageIdOrOptions: string | ScreenshotOptions = 'main',
+    maybeOptions?: ScreenshotOptions
+  ): Promise<ActionResult> {
+    const pageId = typeof pageIdOrOptions === 'string' ? pageIdOrOptions : 'main';
+    const options = typeof pageIdOrOptions === 'object' ? pageIdOrOptions : maybeOptions || {};
+    
     const page = await this.getPage(pageId);
 
-    const screenshot = await page.screenshot({
+    const type = options.type || 'png';
+    const screenshotOptions: any = {
       fullPage: options.fullPage ?? false,
-      type: options.type ?? 'png',
-      quality: options.type === 'png' ? undefined : options.quality ?? 80,
-    });
+      type: type,
+    };
+
+    if (type !== 'png') {
+      screenshotOptions.quality = options.quality ?? 80;
+    }
+
+    const screenshot = await page.screenshot(screenshotOptions);
 
     if (options.path) {
       await fs.writeFile(options.path, screenshot);
@@ -157,7 +176,11 @@ class BrowserControl {
 
     logger.debug('Browser: Screenshot captured');
 
-    return screenshot as Buffer;
+    return { 
+      success: true, 
+      message: 'Screenshot captured', 
+      data: { path: options.path, type: type } 
+    };
   }
 
   /**
@@ -403,6 +426,63 @@ class BrowserControl {
   async getCurrentUrl(pageId: string = 'main'): Promise<string> {
     const page = await this.getPage(pageId);
     return page.url();
+  }
+
+  /**
+   * Get tools for AI consumption
+   */
+  getTools() {
+    return [
+      {
+        name: 'browser_navigate',
+        description: 'Navigate to a URL in the browser',
+        parameters: {
+          type: 'object',
+          properties: {
+            url: { type: 'string', description: 'The URL to navigate to' },
+            wait: { type: 'string', enum: ['load', 'domcontentloaded', 'networkidle0', 'networkidle2'], default: 'networkidle2' }
+          },
+          required: ['url']
+        },
+        execute: async (params: any) => this.goto(params.url)
+      },
+      {
+        name: 'browser_screenshot',
+        description: 'Take a screenshot of the current page',
+        parameters: {
+          type: 'object',
+          properties: {
+            fullPage: { type: 'boolean', description: 'Capture full page or just viewport' }
+          }
+        },
+        execute: async (params: any) => this.screenshot(params)
+      },
+      {
+        name: 'browser_click',
+        description: 'Click on an element using a CSS selector',
+        parameters: {
+          type: 'object',
+          properties: {
+            selector: { type: 'string', description: 'The CSS selector to click' }
+          },
+          required: ['selector']
+        },
+        execute: async (params: any) => this.click(params.selector)
+      },
+      {
+        name: 'browser_type',
+        description: 'Type text into an input field',
+        parameters: {
+          type: 'object',
+          properties: {
+            selector: { type: 'string', description: 'The CSS selector for the input' },
+            text: { type: 'string', description: 'The text to type' }
+          },
+          required: ['selector', 'text']
+        },
+        execute: async (params: any) => this.type(params.selector, params.text)
+      }
+    ];
   }
 }
 

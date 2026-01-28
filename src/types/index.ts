@@ -37,7 +37,7 @@ export interface Attachment {
   duration?: number; // for audio/video
 }
 
-export type ChannelType = 'discord' | 'telegram' | 'whatsapp' | 'slack' | 'web' | 'cli';
+export type ChannelType = 'discord' | 'telegram' | 'whatsapp' | 'slack' | 'web' | 'cli' | 'system';
 
 // ============================================
 // GATEWAY PROTOCOL TYPES
@@ -361,6 +361,16 @@ export interface LoggingConfig {
   level: 'debug' | 'info' | 'warn' | 'error';
   file?: string;
   json: boolean;
+}
+
+// ============================================
+// BOT RESPONSE TYPE
+// ============================================
+
+export interface BotResponse {
+  content: string;
+  attachments?: Attachment[];
+  metadata?: Record<string, unknown>;
 }
 
 // ============================================

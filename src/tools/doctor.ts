@@ -351,7 +351,7 @@ class Doctor {
     
     // Count sessions with high message counts
     const largeSessions = sessions.filter(s => 
-      (s.messageCount || 0) > 100
+      ((s as any).messageCount || s.messages?.length || 0) > 100
     ).length;
 
     if (largeSessions > 0) {

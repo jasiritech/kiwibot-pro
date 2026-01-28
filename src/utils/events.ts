@@ -32,14 +32,29 @@ interface KiwiEvents {
   'agent:chunk': (sessionId: string, chunk: string) => void;
   'agent:complete': (sessionId: string, response: string) => void;
   'agent:error': (sessionId: string, error: Error) => void;
+  'agent:message': (data: unknown) => void;
   
   // Skill events
   'skill:loaded': (skillId: string) => void;
-  'skill:executed': (skillId: string, result: unknown) => void;
+  'skill:executed': (data: { skill: string; result: unknown }) => void;
   'skill:error': (skillId: string, error: Error) => void;
   
   // Config events
   'config:reload': (changes: unknown) => void;
+
+  // Typing events
+  'typing:started': (data: unknown) => void;
+  'typing:stopped': (data: unknown) => void;
+
+  // DM Security events
+  'dm:allowed': (data: unknown) => void;
+
+  // Failover events
+  'failover:allFailed': (data: unknown) => void;
+  'failover:circuitBreaker': (data: unknown) => void;
+
+  // Cron events
+  'cron:executed': (data: unknown) => void;
 }
 
 class EventBus extends EventEmitter {
@@ -60,30 +75,30 @@ class EventBus extends EventEmitter {
   // Type-safe event methods
   emitEvent<K extends keyof KiwiEvents>(
     event: K,
-    ...args: Parameters<KiwiEvents[K]>
+    ...args: any[]
   ): boolean {
     return this.emit(event, ...args);
   }
 
   onEvent<K extends keyof KiwiEvents>(
     event: K,
-    listener: KiwiEvents[K]
+    listener: (...args: any[]) => void
   ): this {
-    return this.on(event, listener as (...args: any[]) => void);
+    return this.on(event, listener);
   }
 
   offEvent<K extends keyof KiwiEvents>(
     event: K,
-    listener: KiwiEvents[K]
+    listener: (...args: any[]) => void
   ): this {
-    return this.off(event, listener as (...args: any[]) => void);
+    return this.off(event, listener);
   }
 
   onceEvent<K extends keyof KiwiEvents>(
     event: K,
-    listener: KiwiEvents[K]
+    listener: (...args: any[]) => void
   ): this {
-    return this.once(event, listener as (...args: any[]) => void);
+    return this.once(event, listener);
   }
 
   // Debug helper

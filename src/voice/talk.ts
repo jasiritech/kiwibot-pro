@@ -79,9 +79,7 @@ class TalkMode extends EventEmitter {
 
     try {
       // Create a File-like object for the API
-      const file = new File([audioBuffer], `audio.${format}`, {
-        type: `audio/${format}`,
-      });
+      const file = await OpenAI.toFile(audioBuffer, `audio.${format}`);
 
       const response = await this.openai.audio.transcriptions.create({
         file,

@@ -106,6 +106,15 @@ const MODELS: Record<string, AIModel> = {
     outputPrice: 0.30,
     capabilities: ['chat', 'vision', 'tools', 'extended-thinking'],
   },
+  'gemini-3-flash-preview': {
+    id: 'gemini-3-flash-preview',
+    name: 'Gemini 3 Flash (Preview)',
+    contextWindow: 1000000,
+    maxOutput: 65536,
+    inputPrice: 0,
+    outputPrice: 0,
+    capabilities: ['chat', 'vision', 'tools', 'json', 'extended-thinking'],
+  },
   'gemini-1.5-pro': {
     id: 'gemini-1.5-pro',
     name: 'Gemini 1.5 Pro',
@@ -485,7 +494,9 @@ class AIService {
     // Start chat with history
     const chat = model.startChat({
       history,
-      systemInstruction: options.systemPrompt,
+      systemInstruction: options.systemPrompt 
+        ? { role: 'system', parts: [{ text: options.systemPrompt }] } 
+        : undefined,
     });
 
     // Get last message
@@ -501,6 +512,7 @@ class AIService {
         completionTokens: 0,
         totalTokens: 0,
       },
+      finishReason: 'stop' as const,
     };
   }
 
@@ -529,7 +541,9 @@ class AIService {
 
     const chat = model.startChat({
       history,
-      systemInstruction: options.systemPrompt,
+      systemInstruction: options.systemPrompt 
+        ? { role: 'system', parts: [{ text: options.systemPrompt }] } 
+        : undefined,
     });
 
     const lastMessage = messages[messages.length - 1];
@@ -562,6 +576,7 @@ class AIService {
 
     if (this.gemini) {
       available.push(
+        MODELS['gemini-3-flash-preview'],
         MODELS['gemini-2.0-flash'],
         MODELS['gemini-2.0-flash-thinking'],
         MODELS['gemini-1.5-pro'],
