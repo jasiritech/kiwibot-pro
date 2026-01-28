@@ -44,7 +44,7 @@ declare class BrowserControl {
     /**
      * Take screenshot
      */
-    screenshot(pageId?: string, options?: ScreenshotOptions): Promise<Buffer>;
+    screenshot(pageIdOrOptions?: string | ScreenshotOptions, maybeOptions?: ScreenshotOptions): Promise<ActionResult>;
     /**
      * Get page content (text)
      */
@@ -150,7 +150,7 @@ declare class BrowserControl {
             };
             required?: undefined;
         };
-        execute: (params: any) => Promise<Buffer<ArrayBufferLike>>;
+        execute: (params: any) => Promise<ActionResult>;
     } | {
         name: string;
         description: string;

@@ -103,18 +103,28 @@ class BrowserControl {
     /**
      * Take screenshot
      */
-    async screenshot(pageId = 'main', options = {}) {
+    async screenshot(pageIdOrOptions = 'main', maybeOptions) {
+        const pageId = typeof pageIdOrOptions === 'string' ? pageIdOrOptions : 'main';
+        const options = typeof pageIdOrOptions === 'object' ? pageIdOrOptions : maybeOptions || {};
         const page = await this.getPage(pageId);
-        const screenshot = await page.screenshot({
+        const type = options.type || 'png';
+        const screenshotOptions = {
             fullPage: options.fullPage ?? false,
-            type: options.type ?? 'png',
-            quality: options.type === 'png' ? undefined : options.quality ?? 80,
-        });
+            type: type,
+        };
+        if (type !== 'png') {
+            screenshotOptions.quality = options.quality ?? 80;
+        }
+        const screenshot = await page.screenshot(screenshotOptions);
         if (options.path) {
             await fs.writeFile(options.path, screenshot);
         }
         logger.debug('Browser: Screenshot captured');
-        return screenshot;
+        return {
+            success: true,
+            message: 'Screenshot captured',
+            data: { path: options.path, type: type }
+        };
     }
     /**
      * Get page content (text)

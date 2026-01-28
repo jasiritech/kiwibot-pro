@@ -221,6 +221,8 @@ class KiwiBotPro {
         console.log('\x1b[32m║\x1b[0m   \x1b[90mAdvanced Personal AI Assistant\x1b[0m                         \x1b[32m║\x1b[0m');
         console.log('\x1b[32m║\x1b[0m   \x1b[90mv1.0.0 | Multi-Channel | Gateway Architecture\x1b[0m          \x1b[32m║\x1b[0m');
         console.log('\x1b[32m║\x1b[0m                                                           \x1b[32m║\x1b[0m');
+        console.log('\x1b[32m║\x1b[0m   \x1b[32mMade with 💚 - MR HONEST\x1b[0m                                \x1b[32m║\x1b[0m');
+        console.log('\x1b[32m║\x1b[0m                                                           \x1b[32m║\x1b[0m');
         console.log('\x1b[32m╚═══════════════════════════════════════════════════════════╝\x1b[0m');
         console.log('');
     }

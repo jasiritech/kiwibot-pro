@@ -4,6 +4,10 @@
 
 *Better than Clawdbot!* 🔥
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Version](https://img.shields.io/badge/version-1.0.0-green.svg)](https://github.com/)
+[![Built for](https://img.shields.io/badge/Built%20for-Gemini%203%20Flash-blue.svg)](https://aistudio.google.com/)
+
 ---
 
 ## 📦 Installation
