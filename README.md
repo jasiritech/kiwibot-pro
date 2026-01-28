@@ -478,4 +478,4 @@ MIT
 
 ---
 
-Made with 💚 - *Bora kuliko Clawdbot!* 🥝
+Made with 💚 - *Mr Honest!* 🥝
